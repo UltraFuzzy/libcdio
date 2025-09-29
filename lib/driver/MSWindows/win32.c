@@ -1031,6 +1031,7 @@ cdio_open_am_win32 (const char *psz_orig_source, const char *psz_access_mode)
   _funcs.get_cdtext             = get_cdtext_win32;
   _funcs.get_cdtext_raw         = read_cdtext_win32;
   _funcs.get_default_device     = cdio_get_default_device_win32;
+  _funcs.get_device_fd          = NULL;
   _funcs.get_devices            = cdio_get_devices_win32;
   _funcs.get_disc_last_lsn      = get_disc_last_lsn_win32;
   _funcs.get_discmode           = get_discmode_win32;

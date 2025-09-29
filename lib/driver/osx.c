@@ -2064,6 +2064,7 @@ cdio_open_osx (const char *psz_orig_source)
     .get_cdtext            = get_cdtext_osx,
     .get_cdtext_raw        = read_cdtext_osx,
     .get_default_device    = cdio_get_default_device_osx,
+    .get_device_fd         = get_device_fd_generic,
     .get_devices           = cdio_get_devices_osx,
     .get_disc_last_lsn     = get_disc_last_lsn_osx,
     .get_discmode          = get_discmode_osx,

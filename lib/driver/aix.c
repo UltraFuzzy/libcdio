@@ -949,6 +949,7 @@ cdio_open_am_aix (const char *psz_orig_source, const char *access_mode)
   _funcs.get_cdtext         = get_cdtext_generic;
   _funcs.get_cdtext_raw     = read_cdtext_generic;
   _funcs.get_default_device = cdio_get_default_device_aix;
+  _funcs.get_device_fd      = get_device_fd_generic;
   _funcs.get_devices        = cdio_get_devices_aix;
   _funcs.get_disc_last_lsn  = get_disc_last_lsn_aix;
   _funcs.get_discmode       = get_discmode_aix;

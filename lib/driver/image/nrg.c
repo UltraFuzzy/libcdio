@@ -1334,8 +1334,9 @@ cdio_open_nrg (const char *psz_source)
   _funcs.get_arg               = _get_arg_image;
   _funcs.get_cdtext            = _get_cdtext_image;
   _funcs.get_cdtext_raw        = NULL;
-  _funcs.get_devices           = cdio_get_devices_nrg;
   _funcs.get_default_device    = cdio_get_default_device_nrg;
+  _funcs.get_device_fd         = NULL;
+  _funcs.get_devices           = cdio_get_devices_nrg;
   _funcs.get_disc_last_lsn     = get_disc_last_lsn_nrg;
   _funcs.get_discmode          = _get_discmode_image;
   _funcs.get_drive_cap         = _get_drive_cap_image;

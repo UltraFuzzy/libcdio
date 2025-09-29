@@ -224,6 +224,12 @@ extern "C" {
                                              track_t i_track);
 
   /*!
+    Return the underlying device file descriptor.
+   */
+  int
+  get_device_fd_generic(void *p_user_data);
+
+  /*!
     Read cdtext information for a CdIo object .
 
     return true on success, false on error or CD-Text information does

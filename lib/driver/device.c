@@ -548,6 +548,18 @@ cdio_get_default_device_driver (/*in/out*/ driver_id_t *p_driver_id)
   return NULL;
 }
 
+int
+cdio_get_device_fd (CdIo_t *p_cdio)
+{
+  if (p_cdio == NULL) {
+    return DRIVER_OP_UNINIT;
+  } else if (p_cdio->op.get_device_fd == NULL) {
+    return DRIVER_OP_UNSUPPORTED;
+  } else {
+    return p_cdio->op.get_device_fd (p_cdio->env);
+  }
+}
+
 /*!Return an array of device names. If you want a specific
   devices, dor a driver give that device, if you want hardware
   devices, give DRIVER_DEVICE and if you want all possible devices,

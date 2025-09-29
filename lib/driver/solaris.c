@@ -1391,6 +1391,7 @@ cdio_open_am_solaris (const char *psz_orig_source, const char *access_mode)
   _funcs.get_cdtext             = get_cdtext_generic;
   _funcs.get_cdtext_raw         = read_cdtext_generic;
   _funcs.get_default_device     = cdio_get_default_device_solaris;
+  _funcs.get_device_fd          = get_device_fd_generic;
   _funcs.get_devices            = cdio_get_devices_solaris;
   _funcs.get_disc_last_lsn      = get_disc_last_lsn_solaris;
   _funcs.get_discmode           = get_discmode_solaris;
