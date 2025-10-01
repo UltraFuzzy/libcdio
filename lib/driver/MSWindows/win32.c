@@ -931,7 +931,7 @@ cdio_get_default_device_win32(void)
 }
 
 /*!
-  Return the underlying device file descriptor.
+  Return the underlying device HANDLE.
  */
 static int
 get_device_fd_win32(void *p_user_data) {
