@@ -930,6 +930,7 @@ cdio_get_default_device_win32(void)
   return NULL;
 }
 
+#ifdef HAVE_WIN32_CDROM
 /*!
   Return the underlying device HANDLE.
  */
@@ -940,6 +941,7 @@ get_device_fd_win32(void *p_user_data) {
    * will always fit in an int. */
   return (int)p_env->h_device_handle;
 }
+#endif
 
 /*!
   Return true if source_name could be a device containing a CD-ROM and
