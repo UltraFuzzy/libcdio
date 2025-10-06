@@ -202,6 +202,15 @@ extern "C" {
     uint8_t * (*get_cdtext_raw) ( void *p_env );
 
     /*!
+      Return the underlying device file descriptor.
+
+      @param obj the CD object.
+      @return the file descriptor or DRIVER_OP_UNSUPPORTED if the device
+      does not use file descriptors.
+    */
+    int (*get_device_fd) ( void *p_env );
+
+    /*!
       Return an array of device names. if CdIo is NULL (we haven't
       initialized a specific device driver), then find a suitable device
       driver.

@@ -831,6 +831,7 @@ static cdio_funcs_t _funcs = {
   .get_cdtext            = get_cdtext_generic,
   .get_cdtext_raw        = read_cdtext_generic,
   .get_default_device    = cdio_get_default_device_netbsd,
+  .get_device_fd         = get_device_fd_generic,
   .get_devices           = cdio_get_devices_netbsd,
   .get_disc_last_lsn     = get_disc_last_lsn_netbsd,
   .get_last_session      = get_last_session_netbsd,

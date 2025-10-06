@@ -953,6 +953,15 @@ extern "C" {
   */
   bool cdio_init(void);
 
+  /**
+     Get access to the underlying device file descriptor of the driver.
+
+      @param obj the CD object.
+      @return the file descriptor or DRIVER_OP_UNSUPPORTED if the device
+      does not use file descriptors.
+  */
+  int cdio_get_device_fd (CdIo_t *p_cdio);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

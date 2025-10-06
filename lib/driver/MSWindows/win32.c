@@ -930,6 +930,19 @@ cdio_get_default_device_win32(void)
   return NULL;
 }
 
+#ifdef HAVE_WIN32_CDROM
+/*!
+  Return the underlying device HANDLE.
+ */
+static int
+get_device_fd_win32(void *p_user_data) {
+  _img_private_t *p_env = p_user_data;
+  /* File handles are guaranteed to be 32 bit even on 64 bit Windows, so this
+   * will always fit in an int. */
+  return (int)p_env->h_device_handle;
+}
+#endif
+
 /*!
   Return true if source_name could be a device containing a CD-ROM and
   we are on a MS Windows platform.
@@ -1031,6 +1044,7 @@ cdio_open_am_win32 (const char *psz_orig_source, const char *psz_access_mode)
   _funcs.get_cdtext             = get_cdtext_win32;
   _funcs.get_cdtext_raw         = read_cdtext_win32;
   _funcs.get_default_device     = cdio_get_default_device_win32;
+  _funcs.get_device_fd          = get_device_fd_win32;
   _funcs.get_devices            = cdio_get_devices_win32;
   _funcs.get_disc_last_lsn      = get_disc_last_lsn_win32;
   _funcs.get_discmode           = get_discmode_win32;
@@ -1097,7 +1111,7 @@ cdio_open_am_win32 (const char *psz_orig_source, const char *psz_access_mode)
   if (init_win32(_data)) {
     return ret;
   }
-  
+
 
  error_exit:
   free_win32(_data);

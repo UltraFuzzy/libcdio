@@ -498,6 +498,15 @@ get_track_preemphasis_generic(const void *p_user_data, track_t i_track)
   return p_env->track_flags[i_track].preemphasis;
 }
 
+/*!
+  Return the underlying device file descriptor.
+ */
+int
+get_device_fd_generic(void *p_user_data) {
+  generic_img_private_t *p_env = p_user_data;
+  return p_env->fd;
+}
+
 void
 set_track_flags(track_flags_t *p_track_flag, uint8_t i_flag)
 {
