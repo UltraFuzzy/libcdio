@@ -58,7 +58,7 @@ typedef enum {
 
 #include "cdio_assert.h"
 #include "cdio_private.h"
-#include "cdtext_private.h" 
+#include "cdtext_private.h"
 
 #include <string.h>
 
@@ -156,7 +156,6 @@ typedef struct {
   track_t i_first_session;   /* first session number */
   lsn_t   *pp_lba;
   io_service_t MediaClass_service;
-  char    psz_MediaClass_service[MAX_SERVICE_NAME];
   SCSITaskDeviceInterface **pp_scsiTaskDeviceInterface;
 
   // io_service_t obj;
@@ -394,12 +393,6 @@ init_osx(_img_private_t *p_env) {
     return false;
   }
 
-  /* Save the name so we can compare against this in case we have to do
-     another scan. FIXME: this is hoaky and there's got to be a better
-     variable to test or way to do.
-   */
-  IORegistryEntryGetPath(p_env->MediaClass_service, kIOServicePlane,
-                         p_env->psz_MediaClass_service);
 #ifdef GET_SCSI_FIXED
   return get_scsi(p_env);
 #else
@@ -760,40 +753,23 @@ get_discmode_osx (void *p_user_data)
 static io_service_t
 get_drive_service_osx(const _img_private_t *p_env)
 {
-  io_service_t  service;
-  io_iterator_t service_iterator;
+  kern_return_t ret;
+  io_service_t ancestor;
+  ret = IORegistryEntryGetParentEntry(p_env->MediaClass_service, kIOServicePlane, &ancestor);
+  if (ret)
+    return 0;
+  while (ancestor) {
+    if (IOObjectConformsTo(ancestor, "IOBlockStorageDevice"))
+      return ancestor;
 
-  service_iterator = GetDeviceIterator ( kIOCDBlockStorageDeviceClassString );
-
-  if( service_iterator == MACH_PORT_NULL ) return 0;
-
-  service = IOIteratorNext( service_iterator );
-  if( service == 0 ) return 0;
-
-  do
-    {
-      char psz_service[MAX_SERVICE_NAME];
-      IORegistryEntryGetPath(service, kIOServicePlane, psz_service);
-      psz_service[MAX_SERVICE_NAME-1] = '\0';
-
-      /* FIXME: This is all hoaky. Here we need info from a parent class,
-         psz_service of what we opened above. We are relying on the
-         fact that the name  will be a substring of the name we
-         openned with.
-      */
-      if (0 == strncmp(psz_service, p_env->psz_MediaClass_service,
-                       strlen(psz_service))) {
-        /* Found our device */
-        IOObjectRelease( service_iterator );
-        return service;
-      }
-
-      IOObjectRelease( service );
-
-    } while( ( service = IOIteratorNext( service_iterator ) ) != 0 );
-
-  IOObjectRelease( service_iterator );
-  return service;
+    io_registry_entry_t next_ancestor;
+    ret = IORegistryEntryGetParentEntry(ancestor, kIOServicePlane, &next_ancestor);
+    IOObjectRelease(ancestor);
+    if (ret)
+      return 0;
+    ancestor = next_ancestor;
+  }
+  return 0;
 }
 
 static void
