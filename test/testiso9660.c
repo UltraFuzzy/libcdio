@@ -114,6 +114,8 @@ time_compare(struct tm *p_tm1, struct tm *p_tm2)
   return okay;
 }
 
+
+#if defined(HAVE_TM_GMTOFF) && !defined(__MINGW32__)
 char* save_env_tz() {
   char *saved_env_tz = NULL;
   const char *env_tz = getenv("TZ");
@@ -131,6 +133,7 @@ void restore_env_tz(const char* saved_env_tz) {
   else
     unsetenv("TZ");
 }
+#endif
 
 int
 main (int argc, const char *argv[])
@@ -317,7 +320,9 @@ main (int argc, const char *argv[])
 	return 48;
       }
     }
+#endif
 
+#if defined(HAVE_TM_GMTOFF) && !defined(__MINGW32__)
     {
       /*
         Tests for extreme timezones motivated by this New Zealand timezone bug:
@@ -341,18 +346,18 @@ main (int argc, const char *argv[])
       iso9660_set_ltime(p_tm, &ltime);
       iso9660_get_ltime(&ltime, &tm);
       if ( ! time_compare(p_tm, &tm) ) {
-        printf("New Zealand time retrieved with iso9660_get_ltime() not\n");
+        printf("NZDT/GMT+13 time retrieved with iso9660_get_ltime() not\n");
         printf("same as that set with iso9660_set_ltime().\n");
         return 49;
       }
 
       /* Farthest west timezone that ISO 9660 can encode */
-      setenv("TZ", "<Etc/GMT+12>+12", 1);
+      setenv("TZ", "BIT+12", 1);
       p_tm = localtime(&now);
       iso9660_set_ltime(p_tm, &ltime);
       iso9660_get_ltime(&ltime, &tm);
       if ( ! time_compare(p_tm, &tm) ) {
-        printf("Etc/GMT+12 time retrieved with iso9660_get_ltime() not\n");
+        printf("BIT/GMT-12 time retrieved with iso9660_get_ltime() not\n");
         printf("same as that set with iso9660_set_ltime().\n");
         return 50;
       }
@@ -363,12 +368,12 @@ main (int argc, const char *argv[])
         TZ offset -14 exceeds the farthest east timezone that ISO 9660 can
         encode and should fail to be encoded
        */
-      setenv("TZ", "too far east-14", 1);
+      setenv("TZ", "FAKE-14", 1);
       p_tm = localtime(&now);
       iso9660_set_ltime(p_tm, &ltime);
       iso9660_get_ltime(&ltime, &tm);
       if ( time_compare(p_tm, &tm) ) {
-        printf("Non-existent timezone successfully retrieved with\n");
+        printf("GMT+14 timezone successfully retrieved with\n");
         printf("iso9660_get_ltime() but should have failed.\n");
         return 51;
       }
@@ -377,12 +382,12 @@ main (int argc, const char *argv[])
         TZ offset +13 exceeds the farthest west timezone that ISO 9660 can
         encode and should fail to be encoded
        */
-      setenv("TZ", "too far west+13", 1);
+      setenv("TZ", "FAKE+13", 1);
       p_tm = localtime(&now);
       iso9660_set_ltime(p_tm, &ltime);
       iso9660_get_ltime(&ltime, &tm);
       if ( time_compare(p_tm, &tm) ) {
-        printf("Non-existent timezone successfully retrieved with\n");
+        printf("GMT-13 timezone successfully retrieved with\n");
         printf("iso9660_get_ltime() but should have failed.\n");
         return 52;
       }
