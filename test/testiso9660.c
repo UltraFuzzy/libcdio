@@ -115,26 +115,6 @@ time_compare(struct tm *p_tm1, struct tm *p_tm2)
 }
 
 
-#if defined(HAVE_TM_GMTOFF) && !defined(__MINGW32__)
-char* save_env_tz() {
-  char *saved_env_tz = NULL;
-  const char *env_tz = getenv("TZ");
-  if (env_tz) {
-    const size_t tz_len = strlen(env_tz);
-    saved_env_tz = malloc(tz_len + 1);
-    memcpy(saved_env_tz, env_tz, tz_len);
-  }
-  return saved_env_tz;
-}
-
-void restore_env_tz(const char* saved_env_tz) {
-  if (saved_env_tz)
-    setenv("TZ", saved_env_tz, 1);
-  else
-    unsetenv("TZ");
-}
-#endif
-
 int
 main (int argc, const char *argv[])
 {
@@ -322,7 +302,11 @@ main (int argc, const char *argv[])
     }
 #endif
 
-#if defined(HAVE_TM_GMTOFF) && !defined(__MINGW32__)
+#if defined(HAVE_TM_GMTOFF) && !defined(_WIN32)
+    /*
+      Both the VS and MingW Windows environemnts are excluded because the POSIX
+      environment that MingW provides does not include setenv() or unsetenv().
+     */
     {
       /*
         Tests for extreme timezones motivated by this New Zealand timezone bug:
@@ -335,7 +319,14 @@ main (int argc, const char *argv[])
        */
       iso9660_ltime_t ltime;
 
-      char *saved_env_tz = save_env_tz();
+      /* save environment variable TZ if set */
+      char *saved_env_tz = NULL;
+      const char *env_tz = getenv("TZ");
+      if (env_tz) {
+        const size_t tz_len = strlen(env_tz);
+        saved_env_tz = malloc(tz_len + 1);
+        memcpy(saved_env_tz, env_tz, tz_len);
+      }
 
       /*
         Farthest east timezone that ISO 9660 can encode, daylight
@@ -393,10 +384,12 @@ main (int argc, const char *argv[])
       }
 
       /* restore TZ in case a test is added after this */
-      restore_env_tz(saved_env_tz);
+      if (saved_env_tz)
+        setenv("TZ", saved_env_tz, 1);
+      else
+        unsetenv("TZ");
       free(saved_env_tz);
     }
-
 #endif
   }
 

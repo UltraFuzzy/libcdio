@@ -383,7 +383,7 @@ iso9660_set_ltime_with_timezone(const struct tm *p_tm,
            0 /* 1/100 secs */ );
 
   /* Set time zone in 15-minute interval encoding. */
-  pvd_date->lt_gmtoff = (time_zone / 15);
+  pvd_date->lt_gmtoff += (time_zone / 15);
   if (pvd_date->lt_gmtoff < -48 ) {
 
     cdio_warn ("Converted ISO 9660 timezone %d is less than -48. Adjusted",
